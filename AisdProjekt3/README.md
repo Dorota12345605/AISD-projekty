@@ -1,22 +1,102 @@
-Dynamic sparse table
+# 🌲 Dynamic Sparse Table (Trie-Based)
 
-To store values indexed by sparse keys from a certain universe N, hash tables seem to be a good solution. A downside of using them may be poor access time in the pessimistic case. Another way to handle this task is to use a trie tree, which offers a better pessimistic time estimate.
+This project implements a **dynamic sparse table** using a **trie structure** as an alternative to hash tables, providing better worst-case performance.
 
-In our task, the trie is described by two parameters: n and k. It is built in the following way: the root has n child nodes, and each of those has k more child nodes. To insert a key x, we start from the root. If the root is free (each node holds at most one key and possibly a value — in our case only the key), we store the value and finish the operation. If the root is already occupied, we search for a place by selecting the next child node using div = x mod n, and then div = div mod k, repeating until we find a free spot. Searching is done similarly — starting from the root and following nodes with indices mod n and then mod k until we find the value x or reach an empty child node (meaning the key is not in the tree). Deleting is a bit harder and requires finding the node p with the given key. If it's an internal node, a deletion candidate must be selected. The candidate q can be searched for in different ways but must always be a leaf node (one with no children). We use a simple strategy of always searching to the left. If a candidate is found, its value is copied to the node p (where key x was stored), and then node q is deleted.
+---
 
-#################################################################################
-Input
-The first line contains the number n, specifying the number of test cases (commands I, L, D, and P – insert, lookup, delete, and print), each on a new line. The next line contains two numbers: minimum and maximum, defining the possible range of input values. The following line contains two more numbers: n and k, the parameters of our trie. Then, after a blank line, there are n test cases as mentioned earlier. Command:
-I x – inserts key x into the trie. If it already exists, it prints x exist; otherwise, it prints nothing.
-L x – prints x exist if the key is found, otherwise x not exist.
-D x – deletes key x from the trie. If deletion fails (key not found), it prints x not exist. If deletion is successful, it prints nothing. The deleted node is either the leftmost external child of the node containing x, or the node itself if it has no children.
-P – prints the contents of the tree in preorder order. If during deletion (D x) the leftmost external node is not chosen, the tree structure will differ, affecting preorder traversal and final output.
-Output
-Each line contains the result of the commands (I, L, D, P), or no line in case no output is expected (e.g., successful insertion or deletion x).
+## 📖 Description
 
-#################################################################################
-Example
-Input
+To store values indexed by sparse keys from a universe `N`, hash tables are commonly used. However, they may perform poorly in the worst case.
+
+This implementation uses a **trie**, which guarantees more predictable access time.
+
+The trie is defined by two parameters:
+- `n` – number of children of the root  
+- `k` – number of children for each subsequent node  
+
+Each node stores **at most one key**.
+
+---
+
+## ⚙️ Operations
+
+### ➕ Insert (`I x`)
+- Start from the root  
+- If empty → insert `x`  
+- Otherwise:
+  - Traverse using:
+    - `x mod n`
+    - then repeated `mod k`
+  - Insert at the first free node  
+- If key exists:
+  ```
+  x exist
+  ```
+
+---
+
+### 🔍 Lookup (`L x`)
+- Traverse using `mod n` and `mod k`  
+- If found:
+  ```
+  x exist
+  ```
+- Otherwise:
+  ```
+  x not exist
+  ```
+
+---
+
+### ❌ Delete (`D x`)
+- Find node `p` containing `x`  
+- If not found:
+  ```
+  x not exist
+  ```
+- If found:
+  - If `p` is a leaf → delete it  
+  - Otherwise:
+    - Find the **leftmost leaf node `q`**  
+    - Copy value from `q` to `p`  
+    - Delete node `q`  
+
+---
+
+### 📖 Print (`P`)
+- Print keys using **preorder traversal**
+
+---
+
+## 📥 Input
+
+```
+<number_of_operations>
+<min> <max>
+<n> <k>
+
+<commands>
+```
+
+### Commands:
+- `I x` – insert  
+- `L x` – lookup  
+- `D x` – delete  
+- `P` – print  
+
+---
+
+## 📤 Output
+
+- Print results only when required  
+- No output for successful insert/delete  
+
+---
+
+## 📊 Example
+
+### Input
+```
 29
 0 511
 8 4
@@ -50,9 +130,11 @@ I 30
 L 30
 D 30
 L 30
+```
 
-Output
-3 81 130 203 150 174 190 30 31 
+### Output
+```
+3 81 130 203 150 174 190 30 31
 32 not exist
 30 exist
 150 exist
@@ -64,3 +146,4 @@ Output
 30 not exist
 30 exist
 30 not exist
+```
